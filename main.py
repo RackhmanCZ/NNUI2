@@ -59,6 +59,7 @@ def predict_img(model, class_names, path, height, width):
         .format(class_names[prediction_class], prediction[0][prediction_class])
     )
 
+
 if __name__ == '__main__':
     data_dir = "dataset"
     training_dir = "\\training_set"
@@ -73,9 +74,9 @@ if __name__ == '__main__':
     img_width = 180
 
     class_names = ["cactus", "no_cactus"]
-    epochs = 3
+    epochs = 5
 
-    train_test = False  # True = train & test, False = test only
+    train_test = True  # True = train & test, False = test only
 
     if train_test:
         train_ds = create_dataset(data_dir, img_height, img_width, batch_size, "training")
