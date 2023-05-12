@@ -74,7 +74,7 @@ if __name__ == '__main__':
     img_width = 180
 
     class_names = ["cactus", "no_cactus"]
-    epochs = 5
+    epochs = 4
 
     train_test = True  # True = train & test, False = test only
 
@@ -86,11 +86,6 @@ if __name__ == '__main__':
         # optimization
         train_ds = train_ds.cache().shuffle(1000).prefetch(buffer_size=tf.data.AUTOTUNE)
         validation_ds = validation_ds.cache().prefetch(buffer_size=tf.data.AUTOTUNE)
-
-        # normalization
-        normalization_layer = layers.Rescaling(1. / 255)
-        normalized_train_ds = train_ds.map(lambda x, y: (normalization_layer(x), y))
-        normalized_validation_ds = validation_ds.map(lambda x, y: (normalization_layer(x), y))
 
         # augmentation by fliping images
         data_augmentation = keras.Sequential(
@@ -105,7 +100,9 @@ if __name__ == '__main__':
         )
 
         model = Sequential([
+            # augmentation
             data_augmentation,
+            # normalization
             layers.Rescaling(1. / 255, input_shape=(img_height, img_width, 3)),
             layers.Conv2D(16, 3, padding='same', activation='relu'),
             layers.MaxPooling2D(),
@@ -126,8 +123,8 @@ if __name__ == '__main__':
         model.summary()
 
         history = model.fit(
-            normalized_train_ds,
-            validation_data=normalized_validation_ds,
+            train_ds,
+            validation_data=validation_ds,
             epochs=epochs
         )
 
